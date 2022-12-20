@@ -63,7 +63,13 @@ public class DFA extends FA {
 
 		for (State s : states) {
 			for (Character c : alphabet) {
-				StateSet setD = delta(s, c);
+				StateSet setD = new StateSet();
+				try {
+					setD = delta(s, c);
+				} catch (Exception e) {
+					continue;
+				}
+
 				if(setD.size() > 0) {
 					t.add(new Tupla<State,Character,State>(s.cloneState(), c, (setD.get(0)).cloneState()));
 				}
@@ -187,7 +193,13 @@ public class DFA extends FA {
 				s1.setFinal(true);
 			}
 			for (Character c : dfa.alphabet) {
-				StateSet setD = dfa.delta(s, c);
+				StateSet setD = new StateSet();
+				try {
+					setD = dfa.delta(s, c);
+				} catch (Exception e) {
+					continue;
+				}
+				 
 				if(setD.size() > 0) {
 					State s2 = (setD.get(0)).cloneState();
 					if(s2.isFinal()) {

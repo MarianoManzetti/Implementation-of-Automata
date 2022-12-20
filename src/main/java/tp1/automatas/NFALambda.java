@@ -48,45 +48,100 @@ public class NFALambda extends FA {
 		//assert repOk();
 	}
 
-	// public NFALambda(StateSet states,	Alphabet alphabet, HashMap<State, HashMap<Character, StateSet>> delta) throws IllegalArgumentException, AutomatonException{
-	// 	this.alphabet = alphabet;
-	// 	this.states = states;
-	// 	this.delta = delta;
-	// }
-
 	@Override
 	public boolean accepts(String string) throws AutomatonException, CloneNotSupportedException {
-		assert repOk();
+		//assert repOk();
 		if (string == null) throw new IllegalArgumentException("String can't be null");
 		if (!verifyString(string)) 
 			throw new IllegalArgumentException("The string's characters must belong to automaton's alphabet");
 		
-		State s = this.initialState();
-		return assistantAccepts(s, string);
-	}
+		Stack<Tupla<State, Integer, Integer>> p = new Stack<Tupla<State, Integer, Integer>>();
+		p.push(new Tupla<State,Integer,Integer>(initialState(), 0, null));
 
-	public boolean assistantAccepts(State s, String str) throws AutomatonException {
-		StateSet ss = new StateSet();
-		if(str != null) {
-			ss = delta(s, str.charAt(0));
-			
-			if(ss.size() > 0) {
-				for (State state : ss) {
-					if(str.length()==1) {
-						if(state.isFinal()) {
-							return true;
-						}
-					} else {
-						assistantAccepts(state, str.substring(1));
-					}
-				}
-			} else {
+		while (!p.empty()) {
+
+			Tupla<State,Integer,Integer> t = p.pop();
+			if((t.first().isFinal()) && (string.length()==t.second())) {
+				return true;
+			} else if(string.length()<t.second()) {
 				return false;
 			}
-		}
-		return false;
-	} 
+			
+			StateSet ssl = new StateSet();
+			try {
+				ssl = delta(t.first(), null);
+			} catch (Exception e) {
 
+			}
+
+			for (State sl : ssl) {
+				p.push(new Tupla<State,Integer,Integer>(sl, t.second(), null));
+			}
+
+			StateSet ss = new StateSet();
+			try {
+				ss = delta(t.first(), string.charAt(t.second()));
+			} catch (Exception e) {
+
+			}
+
+			for (State s : ss) {
+				p.push(new Tupla<State,Integer,Integer>(s, t.second()+1, null));
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check that the alphabet does not contains lambda.
+	 * Check that one and just one  state is marked to be a initial state.
+	 * Check that all transitions are correct. All states and characters should be part of the automaton set of states and alphabet.
+	 */
+	@Override
+	public boolean repOk() {
+		if (states == null && alphabet == null && delta == null) {
+			return true;
+		}
+		
+		int initState = 0;
+
+		Set<State> ss = this.delta.keySet();
+
+		for (State s : this.states) {
+			if (s.isInitial())
+				initState++;
+		}
+
+		if (initState != 1) {
+			return false;
+		}
+
+		for (State s : ss) {
+			if (!states.contains(s)) {
+				return false;
+			} else {
+				Map<Character, StateSet> m = delta.get(s);
+				Set<Character> c = m.keySet();
+
+				for (Character ch : c) {
+					if ((ch != null) && (!alphabet.contains(ch))) {
+						return false;
+					} else if ((ch == null) || (alphabet.contains(ch))) {
+						StateSet p = new StateSet();
+						p = m.get(ch);
+						for (State state : p) {
+							if (!states.contains(state)) {
+								return false;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
 	
 	/**
 	 * Converts the automaton to a DFA.
@@ -288,59 +343,4 @@ public class NFALambda extends FA {
 		}
 		
 	}
-
-	/**
-	 * Check that the alphabet does not contains lambda.
-	 * Check that one and just one  state is marked to be a initial state.
-	 * Check that all transitions are correct. All states and characters should be part of the automaton set of states and alphabet.
-	 */
-	@Override
-	public boolean repOk() {
-		if (states == null && alphabet == null && delta == null) {
-			return true;
-		}
-		
-		int initState = 0;
-
-		Set<State> ss = this.delta.keySet();
-
-		for (State s : this.states) {
-			if (s.isInitial())
-				initState++;
-		}
-
-		if (initState != 1) {
-			System.out.println("me fui 1");
-			return false;
-		}
-
-		for (State s : ss) {
-			if (!states.contains(s)) {
-				System.out.println("me fui 2");
-				return false;
-			} else {
-				Map<Character, StateSet> m = delta.get(s);
-				Set<Character> c = m.keySet();
-
-				for (Character ch : c) {
-					if ((ch != null) && (!alphabet.contains(ch))) {
-						System.out.println("me fui 3");
-						return false;
-					} else if ((ch == null) || (alphabet.contains(ch))) {
-						StateSet p = new StateSet();
-						p = m.get(ch);
-						for (State state : p) {
-							if (!states.contains(state)) {
-								System.out.println("me fui 4");
-								return false;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return true;
-	}
-
 }

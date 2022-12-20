@@ -86,36 +86,36 @@ public class DFAAutomatonMethodsTests4 {
 		assertTrue(i.getName().equals("q0"));
 	}
 
-	// El complemento de este automata no va a funcionar porque el automata no esta completo
+	@Test
+	public void testComplement1() throws Exception {
+		DFA dfaComplement = dfa.complement();
+		assertTrue(dfaComplement.repOk());
+		assertTrue(dfa.accepts("automatas"));
+		assertFalse(dfaComplement.accepts("automatas"));
+	}
 
-	// @Test
-	// public void testComplement1() throws Exception {
-	// 	DFA dfaComplement = dfa.complement();
-	// 	assertFalse(dfaComplement.complement().accepts("automatas"));
-	// }
+	@Test
+	public void testComplement2() throws Exception {
+		assertFalse(dfa.complement().accepts("y"));
+	}
 
-	// @Test
-	// public void testComplement2() throws Exception {
-	// 	assertFalse(dfa.complement().accepts("y"));
-	// }
-
-	// @Test
-	// public void testComplement3() throws Exception {
-	// 	assertFalse(dfa.complement().accepts("lenguajes"));
-	// }
+	@Test
+	public void testComplement3() throws Exception {
+		assertFalse(dfa.complement().accepts("lenguajes"));
+	}
 	
-	// @Test
-	// public void testComplement4() throws Exception {
-	// 	assertTrue(dfa.complement().accepts("automata"));
-	// }	
+	@Test
+	public void testComplement4() throws Exception {
+		assertTrue(dfa.complement().accepts("automata"));
+	}	
 
-	// @Test
-	// public void testComplement5() throws Exception {
-	// 	assertTrue(dfa.complement().accepts("lenguaje"));
-	// }	
+	@Test
+	public void testComplement5() throws Exception {
+		assertTrue(dfa.complement().accepts("lenguaje"));
+	}	
 
-	// @Test
-	// public void testComplement6() throws Exception {
-	// 	assertTrue(dfa.complement().accepts(""));
-	// }	
+	@Test
+	public void testComplement6() throws Exception {
+		assertTrue(dfa.complement().accepts(""));
+	}	
 }

@@ -1,5 +1,6 @@
 package tp1.automatas;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -27,6 +28,8 @@ public class NFALambdaAutomatonMethodsTests1 {
 		a = dotReader.getSymbols();
 		t = dotReader.getArcs();
 		nfal = new NFALambda(s, a, t);
+
+		System.out.println(nfal.toString());
     }
 
     @Test
@@ -34,4 +37,38 @@ public class NFALambdaAutomatonMethodsTests1 {
 		assertTrue(nfal.repOk());
 	}
 
+	@Test
+	public void testAccept() throws Exception {
+		assertTrue(nfal.accepts("aaaaaaaa"));
+	}
+
+	@Test
+	public void testAccept2() throws Exception {
+		assertTrue(nfal.accepts(""));
+	}
+
+	@Test
+	public void testAccept3() throws Exception {
+		assertTrue(nfal.accepts("ca"));
+	}
+
+	@Test
+	public void testAccept4() throws Exception {
+		assertTrue(nfal.accepts("a"));
+	}
+
+	@Test
+	public void testAccept5() throws Exception {
+		assertTrue(nfal.accepts("caa"));
+	}
+
+	@Test
+	public void testNoAccept() throws Exception {
+		assertFalse(nfal.accepts("ac"));
+	}
+
+	@Test
+	public void testNoAccept2() throws Exception {
+		assertFalse(nfal.accepts("c"));
+	}
 }

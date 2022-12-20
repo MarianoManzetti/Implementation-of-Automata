@@ -74,7 +74,7 @@ public abstract class FA {
 	 */
 	public StateSet delta(State from, Character label) throws AutomatonException {
 
-		if (!alphabet.belongsTo(label)) 
+		if (label != null && !alphabet.belongsTo(label)) 
 			throw new IllegalArgumentException("'label' must belong to the automaton's alphabet");
 			
 		if (!delta.containsKey(from) || states.belongTo(from.getName()) == null)

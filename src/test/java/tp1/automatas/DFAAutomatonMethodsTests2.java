@@ -66,6 +66,7 @@ public class DFAAutomatonMethodsTests2 {
 	@Test
 	public void testComplement() throws Exception {
 		DFA dfaComplement = dfa.complement();
+		assertTrue(dfaComplement.repOk());
 		assertTrue(dfa.accepts("bbbbbb"));
 		assertFalse(dfaComplement.accepts("bbbbbb"));
 	}
@@ -73,6 +74,7 @@ public class DFAAutomatonMethodsTests2 {
 	@Test
 	public void testComplement2() throws Exception {
 		DFA dfaComplement = dfa.complement();
+		assertTrue(dfaComplement.repOk());
 		assertTrue(dfa.accepts("bb"));
 		assertFalse(dfaComplement.accepts("bb"));
 	}
@@ -80,6 +82,7 @@ public class DFAAutomatonMethodsTests2 {
 	@Test
 	public void testComplement3() throws Exception {
 		DFA dfaComplement = dfa.complement();
+		assertTrue(dfaComplement.repOk());
 		assertTrue(dfa.accepts(""));
 		assertFalse(dfaComplement.accepts(""));
 	}
@@ -87,6 +90,7 @@ public class DFAAutomatonMethodsTests2 {
 	@Test
 	public void testComplement4() throws Exception {
 		DFA dfaComplement = dfa.complement();
+		assertTrue(dfaComplement.repOk());
 		assertFalse(dfa.accepts("bbbbb"));
 		assertTrue(dfaComplement.accepts("bbbbb"));
 	}
@@ -94,6 +98,7 @@ public class DFAAutomatonMethodsTests2 {
 	@Test
 	public void testComplement5() throws Exception {
 		DFA dfaComplement = dfa.complement();
+		assertTrue(dfaComplement.repOk());
 		assertFalse(dfa.accepts("b"));
 		assertTrue(dfaComplement.accepts("b"));
 	}

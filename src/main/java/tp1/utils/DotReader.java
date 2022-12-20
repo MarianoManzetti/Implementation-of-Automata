@@ -160,7 +160,6 @@ public class DotReader {
 		if (mat.matches()) {
 			String nameFromNode = mat.group(1);
 			String nameToNode = mat.group(2);
-			int c = mat.groupCount();
 			State from = nodes.addState(nameFromNode);
 			State to = nodes.addState(nameToNode);
 

@@ -56,14 +56,17 @@ public class StateSet implements Iterable<State>, Cloneable {
 		return freshState;
 	}
 
-	// Simplified addState, does not check if the state exists in the set
 	public State addState(State s) throws AutomatonException {
 		if (s.getName() == null || s.getName() == "") {
 			throw new AutomatonException("Node name invalid");
 		}
 
-		states.add(s);
-		return s;
+		if(belongTo(s.getName()) == null) {
+			states.add(s);
+			return s;
+		}
+			
+		return belongTo(s.getName());
 	}
 
 	public void deleteState(String name) {

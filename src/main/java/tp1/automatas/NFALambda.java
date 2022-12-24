@@ -150,67 +150,6 @@ public class NFALambda extends FA {
 	 * @throws CloneNotSupportedException
 	 */
 	public DFA toDFA() throws AutomatonException, CloneNotSupportedException {
-		
-		// Map<StateSet, State> stateRef = new HashMap<StateSet, State>();
-		
-		// // creates singleton StateSet with initial state 
-		// Set<State> aux = new HashSet<State>();
-		// aux.add(this.initialState());
-		// StateSet initSet = new StateSet(aux);
-		
-		
-		// Set<Tupla<StateSet,Character,StateSet>> dfaTransitions = new HashSet<Tupla<StateSet,Character,StateSet>>();
-		// // apply lamda closure to initSet
-		// initSet = closure(initSet, '/', true);
-		// Stack<StateSet> toVisit = new Stack<StateSet>();
-		// Set<StateSet> visited = new HashSet<StateSet>();
-		// toVisit.push(initSet);
-		// // generates all transitions between statesets
-		// while(!toVisit.isEmpty()) {
-		// 	dfaTransitions.addAll(buildTransitions(toVisit, visited));
-		// }		
-		// // maps StateSets visited to States 
-		// int j = 0;
-		// Set<State> dfaStates = new HashSet<State>();
-		// Boolean initialSt = false, finalSt = false;
-		// for (StateSet ss : visited) {
-		// 	if (ss.contains(this.initialState())) {
-		// 		initialSt = true;
-		// 	} else {initialSt = false;}
-		// 	if (ss.containsSomeOf(this.finalStates())) {
-		// 		finalSt = true;
-		// 	} else {finalSt = false;}
-		// 	State ns = new State("q"+j, initialSt, finalSt);
-		// 	stateRef.put(ss, ns);
-		// 	dfaStates.add(ns);
-		// 	j++;
-		// }
-
-		// Set<Tupla<State, Character, State>> finalTransitions = new HashSet<Tupla<State, Character, State>>();
-		// // transforms <StateSet, Character, StateSet> transitions to <State, Char, State>
-		// for (Tupla<StateSet, Character, StateSet> t : dfaTransitions) {
-		// 	State fst = stateRef.get(t.first()); 
-		// 	Character snd = t.second();
-		// 	State trd = stateRef.get(t.third());
-		// 	Tupla<State, Character, State> auxT = new Tupla<State,Character,State>(fst, snd, trd);
-		// 	finalTransitions.add(auxT);
-		// }
-		
-		// return new DFA(new StateSet(dfaStates), this.alphabet, finalTransitions);
-		
-		assert repOk();
-
-		StateSet ss1 = new StateSet();
-		StateSet ss2 = new StateSet();
-		StateSet ss3 = new StateSet();
-		StateSet setInitialState = new StateSet();
-
-		ss1.addState(this.initialState());
-		setInitialState = closure(ss1, ss2, '/');
-
-		Set<Tupla<StateSet,Character,StateSet>> st = new HashSet<Tupla<StateSet,Character,StateSet>>();
-
-		Set<Tupla<State,Character,State>> newTransitions = this.buildTransitions(ss3, setInitialState, st);
 	
 		return null;
 	}
@@ -225,122 +164,36 @@ public class NFALambda extends FA {
 	 * @throws CloneNotSupportedException
 	 */
 	public Set<Tupla<State,Character,State>> buildTransitions(StateSet visited, StateSet toVisit, Set<Tupla<StateSet,Character,StateSet>> st) throws CloneNotSupportedException, AutomatonException {
-		// if (visited.contains(toVisit.peek())) {
-		// 	toVisit.pop();
-		// 	return new HashSet<Tupla<StateSet, Character, StateSet>>();
-		// }
-		// Set<Tupla<StateSet,Character,StateSet>> allTransitions = new HashSet<Tupla<StateSet,Character,StateSet>>();
-		// StateSet aux = toVisit.pop();
-		// visited.add(aux);
-		// Tupla<StateSet, Character, StateSet> auxTupla = null;
-		
-		// for (Character c : this.alphabet) {
-		// 	// get the neighbors states for c char
-		// 	StateSet arriveSt = closure(aux, c, false);
-		// 	if (arriveSt.size() > 0) {
-		// 		// adds states reached by lamda starting from itself
-		// 		arriveSt = closure(aux, '/', true);
-		// 		auxTupla = new Tupla<StateSet, Character, StateSet>(aux, c, arriveSt);
-		// 		allTransitions.add(auxTupla);
-		// 		toVisit.push(arriveSt);
-		// 	}
-		// }
-        // return allTransitions;
-
-		for (State s : toVisit) {
-			for (Character c : this.alphabet) {
-				if(c!='/') {
-					StateSet ss = new StateSet();
-					ss.addState(s);
-					StateSet newToVisit = new StateSet();
-					newToVisit = closure(ss, new StateSet(), c);
-					if(!toVisit.containsAll(newToVisit)) {
-						Tupla<StateSet,Character,StateSet> t = new Tupla<StateSet,Character,StateSet>(toVisit, c, newToVisit);
-						st.add(t);
-					}
-				}
-			}
-		}
-
-
-
-
-		return null; 
+		return null;
 
     }
 	
 	/**
-	 * Gets all states reached by a specific char in all the way, or just neighbors depending on 'total' param value 
-	 * @param ss StateSet used as starting point
-	 * @param c the symbol used to reach another states
-	 * @param total used to determine if go recursive or not. 
-	 * @return StateSet with the States reached by c, starting from ss.
+	 * Lambda closure takes a set of states and returns the set of reachable states taking only "lambda" transitions
+	 * @param q Queue<State> used as starting point
+	 * @return StateSet with the States reached by "lambda", starting from q
 	 * @throws AutomatonException
 	 * @throws CloneNotSupportedException
 	 */
-	public StateSet closure(StateSet ss, StateSet ssf, Character c) throws CloneNotSupportedException, AutomatonException {
-		// if ss is empty, returns an empty set
-		// if (ss.size() == 0) {
-		// 	return new StateSet();
-		// } else {
-		// 	StateSet temp;
-		// 	StateSet result = new StateSet();
-		// 	HashMap<Character, StateSet> arcs;
-		// 	// iterates over ss
-		// 	for (State q : ss) {
-		// 		temp = new StateSet();
-		// 		arcs = delta.get(q);
-		// 		// gets the states reached by c, if they exists
-		// 		if (arcs.containsKey(c)) 
-		// 			temp = arcs.get(c);
+	public StateSet closure(Queue<State> q) throws CloneNotSupportedException, AutomatonException {
 		
-		// 		result = result.union(temp);
-		// 	}
-		// 	if (total) {
-		// 		return ss.union(closure(result, c, true));
-		// 	} else {
-		// 		return result;
-		// 	}
-
-		// }
-
-		StateSet achieveSet = new StateSet();
-		StateSet auxAchieveSet = new StateSet();
-
-		if(c != '/') {
-			if(ss.size() == 1 && ssf.size() == 0) {
-				
-				auxAchieveSet = delta(ss.get(0), c);
-	
-				closure(auxAchieveSet, achieveSet, c);
-			} else if(ss.size() > 0) {
-
-				achieveSet = ss.cloneSS();
-				achieveSet.union(ssf.cloneSS());
-
-				for (State state : ss) {
-					auxAchieveSet.union(delta(state, c));
+		StateSet ss = new StateSet();
+		
+		while (!q.isEmpty()) {
+			State s = q.poll();
+			if(ss.belongTo(s.getName()) == null);
+				ss.addState(s);
+			try {
+				StateSet auxss = new StateSet();
+				auxss = delta(s, null);
+				for (State auxs : auxss) {
+					q.add(auxs);
 				}
-	
-				closure(auxAchieveSet, achieveSet, c);
+			} catch (Exception e) {
+				continue;
 			}
-			
-			return achieveSet;
-		} else {
-
-			achieveSet = ss.cloneSS();
-			achieveSet.union(ssf.cloneSS());
-
-			if(ss.size() > 0) {
-				for (State state : ss) {
-					auxAchieveSet.union(delta(state, c));
-				}
-	
-				closure(auxAchieveSet, achieveSet, c);
-			}
-			
-			return achieveSet;
 		}
-		
+
+		return ss;
 	}
 }

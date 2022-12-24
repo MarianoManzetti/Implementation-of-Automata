@@ -58,7 +58,7 @@ public abstract class FA {
 		StateSet result = new StateSet();
 		for (State s:states) {
 			if (s.isFinal() == true) {
-				result.addState(s.getName());
+				result.addState(s);
 			}
 		}
 		return result;

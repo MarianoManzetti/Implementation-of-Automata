@@ -3,6 +3,8 @@ package tp1.automatas;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Set;
 
 import org.junit.BeforeClass;
@@ -17,6 +19,8 @@ public class NFALambdaAutomatonMethodsTests1 {
 	private static StateSet s;
 	private static Alphabet a;
 	private static Set<Tupla<State,Character,State>> t;
+	private static Queue<State> q = new LinkedList<State>();
+	private static StateSet auxSS;
 
     @BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -28,8 +32,6 @@ public class NFALambdaAutomatonMethodsTests1 {
 		a = dotReader.getSymbols();
 		t = dotReader.getArcs();
 		nfal = new NFALambda(s, a, t);
-
-		System.out.println(nfal.toString());
     }
 
     @Test
@@ -70,5 +72,17 @@ public class NFALambdaAutomatonMethodsTests1 {
 	@Test
 	public void testNoAccept2() throws Exception {
 		assertFalse(nfal.accepts("c"));
+	}
+
+	@Test
+	public void testClosure() throws CloneNotSupportedException, AutomatonException {
+
+		q.add(nfal.initialState());
+
+		auxSS = nfal.closure(q);
+
+		assertTrue(auxSS.size() == 2);
+		assertTrue(auxSS.belongTo("q0") != null);
+		assertTrue(auxSS.belongTo("q2") != null);
 	}
 }

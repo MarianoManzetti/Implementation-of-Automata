@@ -169,13 +169,11 @@ public class NFALambda extends FA {
 
 		while (!q.isEmpty()) {
 			State s = q.poll();
-			if(!qss.contains(s));
-				qss.add(s);
 			try {
 				StateSet auxss = new StateSet();
 				auxss = delta(s, a);
 				for (State auxs : auxss) {
-					q.add(auxs);
+					qss.add(auxs);
 				}
 			} catch (Exception e) {
 				continue;

@@ -21,6 +21,8 @@ public class NFALambdaAutomatonMethodsTests1 {
 	private static Set<Tupla<State,Character,State>> t;
 	private static Queue<State> q = new LinkedList<State>();
 	private static Queue<State> auxSS = new LinkedList<State>();
+	private static Queue<State> q2 = new LinkedList<State>();
+	private static Queue<State> auxSS2 = new LinkedList<State>();
 
     @BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -84,5 +86,20 @@ public class NFALambdaAutomatonMethodsTests1 {
 		assertTrue(auxSS.size() == 2);
 		assertTrue(auxSS.contains(nfal.initialState()));
 		assertTrue(auxSS.contains(nfal.finalStates().get(0)));
+	}
+
+	@Test
+	public void testClosure2() throws CloneNotSupportedException, AutomatonException {
+
+		Queue<State> aux = new LinkedList<State>();
+
+		q2.add(nfal.initialState());
+
+		aux = nfal.closure(q2);
+
+		auxSS2 = nfal.move(aux, 'c');
+
+		assertTrue(auxSS2.size() == 1);
+		assertTrue(auxSS2.poll().getName().equals("q1"));
 	}
 }

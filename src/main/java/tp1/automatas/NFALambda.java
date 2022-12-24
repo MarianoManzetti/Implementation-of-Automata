@@ -156,33 +156,51 @@ public class NFALambda extends FA {
 
 	
 	/**
-	 * Builds the transitions of the new automaton
-	 * @param toVisit unvisited StateSets
-	 * @param visited visited StateSets
-	 * @return all transitions for StateSet on the top of toVisit, and all chars into Alphabet
+	 * Move takes a set of states and a symbol from the alphabet and returns the set of states reachable by the given symbol
+	 * @param q Queue<State> used as starting point
+	 * @param a alphabet symbol
+	 * @return set of states reachable by the given symbol
 	 * @throws AutomatonException
 	 * @throws CloneNotSupportedException
 	 */
-	public Set<Tupla<State,Character,State>> buildTransitions(StateSet visited, StateSet toVisit, Set<Tupla<StateSet,Character,StateSet>> st) throws CloneNotSupportedException, AutomatonException {
-		return null;
+	public Queue<State> move(Queue<State> q, Character a) throws CloneNotSupportedException, AutomatonException {
+		
+		Queue<State> qss = new LinkedList<State>();
+
+		while (!q.isEmpty()) {
+			State s = q.poll();
+			if(!qss.contains(s));
+				qss.add(s);
+			try {
+				StateSet auxss = new StateSet();
+				auxss = delta(s, a);
+				for (State auxs : auxss) {
+					q.add(auxs);
+				}
+			} catch (Exception e) {
+				continue;
+			}
+		}
+
+		return qss;
 
     }
 	
 	/**
 	 * Lambda closure takes a set of states and returns the set of reachable states taking only "lambda" transitions
 	 * @param q Queue<State> used as starting point
-	 * @return StateSet with the States reached by "lambda", starting from q
+	 * @return Queue<State> with the States reached by "lambda", starting from q
 	 * @throws AutomatonException
 	 * @throws CloneNotSupportedException
 	 */
-	public StateSet closure(Queue<State> q) throws CloneNotSupportedException, AutomatonException {
+	public Queue<State> closure(Queue<State> q) throws CloneNotSupportedException, AutomatonException {
 		
-		StateSet ss = new StateSet();
-		
+		Queue<State> qss = new LinkedList<State>();
+
 		while (!q.isEmpty()) {
 			State s = q.poll();
-			if(ss.belongTo(s.getName()) == null);
-				ss.addState(s);
+			if(!qss.contains(s));
+				qss.add(s);
 			try {
 				StateSet auxss = new StateSet();
 				auxss = delta(s, null);
@@ -194,6 +212,6 @@ public class NFALambda extends FA {
 			}
 		}
 
-		return ss;
+		return qss;
 	}
 }

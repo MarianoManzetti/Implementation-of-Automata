@@ -20,7 +20,7 @@ public class NFALambdaAutomatonMethodsTests2 {
 	private static Alphabet a;
 	private static Set<Tupla<State,Character,State>> t;
 	private static Queue<State> q = new LinkedList<State>();
-	private static StateSet auxSS;
+	private static Queue<State> auxSS = new LinkedList<State>();
 
     @BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -87,7 +87,7 @@ public class NFALambdaAutomatonMethodsTests2 {
 		auxSS = nfal.closure(q);
 
 		assertTrue(auxSS.size() == 2);
-		assertTrue(auxSS.belongTo("q0") != null);
-		assertTrue(auxSS.belongTo("q4") != null);
+		assertTrue(auxSS.contains(nfal.initialState()));
+		assertTrue(auxSS.contains(nfal.finalStates().get(0)));
 	}
 }

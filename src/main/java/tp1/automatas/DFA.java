@@ -240,49 +240,70 @@ public class DFA extends FA {
 	 * @returns a new DFA accepting the union of both languages.
 	 */
 	public DFA union(DFA other) throws AutomatonException, Exception {
-		
+
+		DFA dfa1 = cloneDFA();
+		DFA dfa2 = other.cloneDFA();
+
 		// New initial state
 		State newInitState = new State("q'", true, false);
 		// New StateSet
-		StateSet ss = new StateSet(); 
-		//New Alphabet
+		StateSet ss = new StateSet();
+		ss.addState(newInitState); 
+		// New Alphabet
 		Alphabet a = new Alphabet();
+		a = dfa1.alphabet.cloneAlpha();
+		a.union(dfa2.alphabet.cloneAlpha());
 		// New Transitions
 		Set<Tupla<State, Character, State>> t = new HashSet<Tupla<State, Character, State>>();
-
-		// New cloned StateSet 
-		ss = (this.states).cloneSS();
-		ss.union((other.states).cloneSS());
-
-		for (State s : ss) {
-			if(s.isInitial()) {
-				s.setInitial(false);
-				t.add(new Tupla<State,Character,State>(newInitState, null, s));
-			} 
-		}
 		
-		ss.addState(newInitState);
+		// Cloning the new stateset
+		HashMap<State, String> aux1 = new HashMap<State, String>();
+		HashMap<State, String> aux2 = new HashMap<State, String>();
 
-		// New cloned Alphabet
-		a = (this.alphabet).cloneAlpha();
-		a.union((other.alphabet).cloneAlpha());
+		int i = 0;
+		
+		for (State s : dfa1.states) {
+			Boolean f = false;
+			aux1.put(s, "q"+i);
+			if(s.isFinal()) f = true;
+			State newS = new State("q"+i, false, f);
+			ss.addState(newS);
+			if(s.isInitial()) {
+				t.add(new Tupla<State,Character,State>(newInitState, null, newS));
+			}
+			i++;
+		}
 
-		// New cloned this.delta
-		for (State s : this.states) {
-			for (Character c : this.alphabet) {
-				StateSet setD = this.delta(s, c);
-				if(setD.size() > 0) {
-					t.add(new Tupla<State,Character,State>(s.cloneState(), c, (setD.get(0)).cloneState()));
+		for (State s : dfa2.states) {
+			Boolean f = false;
+			aux2.put(s, "q"+i);
+			if(s.isFinal()) f = true;
+			State newS = new State("q"+i, false, f);
+			ss.addState(newS);
+			if(s.isInitial()) {
+				t.add(new Tupla<State,Character,State>(newInitState, null, newS));
+			}
+			i++;
+		}
+
+		for (State s : dfa1.states) {
+			HashMap<Character, StateSet> g = dfa1.delta.get(s);
+			for (Character c : dfa1.alphabet) {
+				if(g.containsKey(c)) {
+					String name1 = aux1.get(s);
+					String name2 = aux1.get(g.get(c).get(0));
+					t.add(new Tupla<State,Character,State>(ss.belongTo(name1), c, ss.belongTo(name2)));
 				}
 			}
 		}
 
-		// New cloned other.delta
-		for (State s : other.states) {
-			for (Character c : other.alphabet) {
-				StateSet setD = other.delta(s, c);
-				if(setD.size() > 0) {
-					t.add(new Tupla<State,Character,State>(s.cloneState(), c, (setD.get(0)).cloneState()));
+		for (State s : dfa2.states) {
+			HashMap<Character, StateSet> g = dfa2.delta.get(s);
+			for (Character c : dfa2.alphabet) {
+				if(g.containsKey(c)) {
+					String name1 = aux2.get(s);
+					String name2 = aux2.get(g.get(c).get(0));
+					t.add(new Tupla<State,Character,State>(ss.belongTo(name1), c, ss.belongTo(name2)));
 				}
 			}
 		}

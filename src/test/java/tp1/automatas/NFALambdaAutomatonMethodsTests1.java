@@ -106,7 +106,6 @@ public class NFALambdaAutomatonMethodsTests1 {
 	@Test
 	public void testToDFA() throws AutomatonException, CloneNotSupportedException {
 		DFA dfa = nfal.toDFA();
-		System.out.print(dfa.toString());
 
 		assertTrue(nfal.repOk());
 		assertTrue(dfa.repOk());

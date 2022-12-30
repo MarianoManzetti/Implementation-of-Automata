@@ -19,6 +19,11 @@ public class DFAAutomatonMethodsTests2 {
 	private static Alphabet a;
 	private static Set<Tupla<State,Character,State>> t;
 
+	private static DFA dfa2;
+	private static StateSet s2;
+	private static Alphabet a2;
+	private static Set<Tupla<State,Character,State>> t2;
+
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
 		DotReader dotReader = new DotReader("src/test/java/tp1/dfa2");
@@ -29,6 +34,15 @@ public class DFAAutomatonMethodsTests2 {
 		t = dotReader.getArcs();
 
 		dfa = new DFA(s, a, t);
+
+		DotReader dotReader2 = new DotReader("src/test/java/tp1/dfa3");
+		dotReader2.parse();
+
+		s2 = dotReader2.getNodes();
+		a2 = dotReader2.getSymbols();
+		t2 = dotReader2.getArcs();
+
+		dfa2 = new DFA(s2, a2, t2);
 	}
 
 	// Tests for DFA2
@@ -116,4 +130,30 @@ public class DFAAutomatonMethodsTests2 {
 		assertTrue(finS.size()==1);
 		assertTrue(finS.belongTo("q0") != null);
 	}
+
+	@Test
+	public void testUnion() throws AutomatonException, Exception {
+		DFA newDFA = dfa.union(dfa2);
+
+		assertTrue(newDFA.repOk());
+		assertTrue(newDFA.accepts("bbbbbb"));
+		assertTrue(newDFA.accepts("bb"));
+		assertTrue(newDFA.accepts(""));	
+		assertTrue(newDFA.accepts("aaa"));
+		assertTrue(newDFA.accepts("a"));
+
+		assertFalse(newDFA.accepts("bbbbb"));
+		assertFalse(newDFA.accepts("b"));
+		assertFalse(newDFA.accepts("aa"));
+	}
+
+	@Test
+	public void testIntersecion() throws Exception {
+		DFA newDFA = dfa.intersection(dfa2);
+
+		System.out.println(newDFA.toString());
+
+		assertTrue(newDFA.repOk());
+	}
+
 }

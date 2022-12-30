@@ -20,7 +20,9 @@ public class NFALambdaAutomatonMethodsTests2 {
 	private static Alphabet a;
 	private static Set<Tupla<State,Character,State>> t;
 	private static Queue<State> q = new LinkedList<State>();
+	private static Queue<State> q2 = new LinkedList<State>();
 	private static Queue<State> auxSS = new LinkedList<State>();
+	private static Queue<State> auxSS2 = new LinkedList<State>();
 
     @BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -89,5 +91,36 @@ public class NFALambdaAutomatonMethodsTests2 {
 		assertTrue(auxSS.size() == 2);
 		assertTrue(auxSS.contains(nfal.initialState()));
 		assertTrue(auxSS.contains(nfal.finalStates().get(0)));
+	}
+
+	@Test
+	public void testClosure2() throws CloneNotSupportedException, AutomatonException {
+
+		Queue<State> aux = new LinkedList<State>();
+
+		q2.add(nfal.finalStates().get(0));
+
+		aux = nfal.closure(q2);
+
+		auxSS2 = nfal.move(aux, 'c');
+
+		assertTrue(auxSS2.size() == 1);
+		assertTrue(auxSS2.poll().getName().equals("q1"));
+	}
+
+	@Test
+	public void testToDFA() throws AutomatonException, CloneNotSupportedException {
+		DFA dfa = nfal.toDFA();
+
+		assertTrue(nfal.repOk());
+		assertTrue(dfa.repOk());
+		assertTrue(dfa.accepts("casa"));
+		assertTrue(dfa.accepts("casacasa"));
+		assertTrue(dfa.accepts("casacasacasa"));
+		assertFalse(dfa.accepts(""));
+		assertFalse(dfa.accepts("c"));
+		assertFalse(dfa.accepts("cas"));
+		assertFalse(dfa.accepts("ca"));
+		assertFalse(dfa.accepts("casacas"));
 	}
 }

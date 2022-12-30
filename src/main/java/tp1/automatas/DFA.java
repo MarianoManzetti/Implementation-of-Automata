@@ -66,12 +66,11 @@ public class DFA extends FA {
 				StateSet setD = new StateSet();
 				try {
 					setD = delta(s, c);
+					if(setD.size() > 0) {
+						t.add(new Tupla<State,Character,State>(s.cloneState(), c, (setD.get(0)).cloneState()));
+					}
 				} catch (Exception e) {
 					continue;
-				}
-
-				if(setD.size() > 0) {
-					t.add(new Tupla<State,Character,State>(s.cloneState(), c, (setD.get(0)).cloneState()));
 				}
 			}
 		}
@@ -288,9 +287,8 @@ public class DFA extends FA {
 			}
 		}
 
-		//NFALambda newNFA = new NFALambda(ss, a, t);
-		//DFA newDFA = newNFA.toDFA();
-
-		return new DFA(ss, a, t);
+		NFALambda newNFA = new NFALambda(ss, a, t);
+		
+		return newNFA.toDFA();
 	}
 }

@@ -150,4 +150,14 @@ public class StateSet implements Iterable<State>, Cloneable {
 		
 		return true;
 	}
+
+	public State containsInitialState() {
+		for (State s : states) {
+			if(s.isInitial()) {
+				return s;
+			}
+		}
+		
+		return null;
+	}
 }

@@ -142,6 +142,50 @@ public class NFALambda extends FA {
 		
 		return true;
 	}
+
+	public NFALambda cloneNFALambda() throws CloneNotSupportedException, AutomatonException{
+		StateSet ss = states.cloneSS();
+		Alphabet a = alphabet.cloneAlpha();
+		Set<Tupla<State, Character, State>> t = cloneDelta();
+
+		return new NFALambda(ss, a, t);
+	}
+
+	public Set<Tupla<State, Character, State>> cloneDelta() throws CloneNotSupportedException, AutomatonException{
+		Set<Tupla<State, Character, State>> t = new HashSet<Tupla<State, Character, State>>();
+
+		for (State s : states) {
+			StateSet setL = new StateSet();
+			
+			try {
+				setL = delta(s, null);
+				if(setL.size() > 0) {
+					for (State s2 : setL) {
+						t.add(new Tupla<State,Character,State>(s.cloneState(), null, s2.cloneState()));
+					}
+				}
+			} catch (Exception e) {
+
+			}
+			
+			for (Character c : alphabet) {
+				StateSet setD = new StateSet();
+				
+				try {
+					setD = delta(s, c);
+					if(setD.size() > 0) {
+						for (State s3 : setD) {
+							t.add(new Tupla<State,Character,State>(s.cloneState(), c, s3.cloneState()));
+						}
+					}
+				} catch (Exception e) {
+					continue;
+				}
+			}
+		}
+
+		return t;
+	}
 	
 	/**
 	 * Converts the automaton to a DFA.
@@ -150,8 +194,43 @@ public class NFALambda extends FA {
 	 * @throws CloneNotSupportedException
 	 */
 	public DFA toDFA() throws AutomatonException, CloneNotSupportedException {
-	
-		return null;
+		
+		NFALambda nfal = this.cloneNFALambda();
+
+		Set<Tupla<Queue<State>, Character, Queue<State>>> transitions = new HashSet<Tupla<Queue<State>, Character, Queue<State>>>();
+
+		Queue<State> q = new LinkedList<State>();
+		Queue<Queue<State>> t = new LinkedList<Queue<State>>();
+		Queue<Queue<State>> visit = new LinkedList<Queue<State>>();
+
+		q.add(nfal.initialState());
+
+		t.add(nfal.closure(q));
+
+		while (!t.isEmpty()) {
+			Queue<State> s = t.poll();
+			if(!visit.contains(s)) {
+				visit.add(s);
+				for (Character c : nfal.alphabet) {
+					Queue<State> m = new LinkedList<State>();
+					m = nfal.closure(nfal.move(s, c));
+					if(!m.isEmpty()) {
+						if(!t.contains(m)) {
+							t.add(m);
+						}
+						transitions.add(new Tupla<Queue<State>,Character,Queue<State>>(s, c, m));
+					}
+				}
+			} else {
+				continue;
+			}
+		}
+
+		Tupla<StateSet, Set<Tupla<State, Character, State>>, Character> build = nfal.buildTransitions(transitions, visit);
+
+		DFA dfa = new DFA(build.first().cloneSS(), nfal.alphabet.cloneAlpha(), build.second());
+
+		return dfa;
 	}
 
 	
@@ -167,8 +246,7 @@ public class NFALambda extends FA {
 		
 		Queue<State> qss = new LinkedList<State>();
 
-		while (!q.isEmpty()) {
-			State s = q.poll();
+		for (State s : q) {
 			try {
 				StateSet auxss = new StateSet();
 				auxss = delta(s, a);
@@ -194,16 +272,21 @@ public class NFALambda extends FA {
 	public Queue<State> closure(Queue<State> q) throws CloneNotSupportedException, AutomatonException {
 		
 		Queue<State> qss = new LinkedList<State>();
+		Queue<State> auxQ = new LinkedList<State>();
 
-		while (!q.isEmpty()) {
-			State s = q.poll();
+		for (State s : q) {
+			auxQ.add(s);
+		}
+
+		while (!auxQ.isEmpty()) {
+			State s = auxQ.poll();
 			if(!qss.contains(s));
 				qss.add(s);
 			try {
 				StateSet auxss = new StateSet();
 				auxss = delta(s, null);
 				for (State auxs : auxss) {
-					q.add(auxs);
+					auxQ.add(auxs);
 				}
 			} catch (Exception e) {
 				continue;
@@ -212,4 +295,60 @@ public class NFALambda extends FA {
 
 		return qss;
 	}
+
+	public Tupla<StateSet, Set<Tupla<State, Character, State>>, Character> buildTransitions(Set<Tupla<Queue<State>, Character, Queue<State>>> t, Queue<Queue<State>> v) throws AutomatonException {
+		
+		HashMap<Queue<State>, String> aux = new HashMap<Queue<State>, String>();
+		Set<Tupla<State, Character, State>> newT = new HashSet<Tupla<State,Character,State>>();
+		StateSet newSS = new StateSet();
+
+		int i = 0;
+		for (Queue<State> queue : v) {
+			aux.put(queue, "q"+i);
+
+			Boolean f1 = false;
+			Boolean i1 = false;
+
+			for (State s : queue) {
+				if(!f1) {
+					if(s.isFinal()) {
+						f1 = true;
+					}
+				}
+				if(!i1) {
+					if(s.isInitial()) {
+						i1 = true;
+					}
+				}
+			}
+
+			State newS = new State("q"+i, i1, f1);
+			if(newS.isInitial()) {
+				State is = newSS.containsInitialState();
+				if(is != null) {
+					newS.setInitial(false);
+					newSS.addState(newS);
+				} else {
+					newSS.addState(newS);
+				}
+			} else {
+				newSS.addState(newS);
+			}
+
+			i++;
+		}
+		
+		for (Tupla<Queue<State>, Character, Queue<State>> tupla : t) {
+
+			String name1 = aux.get(tupla.first());
+			String name2 = aux.get(tupla.third());
+
+			State s1 = newSS.belongTo(name1);
+			State s2 = newSS.belongTo(name2);
+
+			newT.add(new Tupla<State,Character,State>(s1, tupla.second(), s2));
+		}
+
+		return new Tupla<StateSet, Set<Tupla<State, Character, State>>, Character>(newSS, newT, null);
+	};
 }

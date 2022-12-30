@@ -102,4 +102,20 @@ public class NFALambdaAutomatonMethodsTests1 {
 		assertTrue(auxSS2.size() == 1);
 		assertTrue(auxSS2.poll().getName().equals("q1"));
 	}
+
+	@Test
+	public void testToDFA() throws AutomatonException, CloneNotSupportedException {
+		DFA dfa = nfal.toDFA();
+		System.out.print(dfa.toString());
+
+		assertTrue(nfal.repOk());
+		assertTrue(dfa.repOk());
+		assertTrue(dfa.accepts("aaaaaaaa"));
+		assertTrue(dfa.accepts("ca"));
+		assertTrue(dfa.accepts("caaaaa"));
+		assertTrue(dfa.accepts(""));
+		assertTrue(dfa.accepts("a"));
+		assertFalse(dfa.accepts("ac"));
+		assertFalse(dfa.accepts("c"));
+	}
 }

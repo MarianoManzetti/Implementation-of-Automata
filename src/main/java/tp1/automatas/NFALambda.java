@@ -9,9 +9,7 @@ import tp1.utils.Tupla;
  */
 public class NFALambda extends FA {
 
-	/*
-	 *  Automata methods
-	*/
+	// Constructor
 	public NFALambda(StateSet states,	Alphabet alphabet, Set<Tupla<State,Character,State>> transitions) 
 	throws IllegalArgumentException, AutomatonException{
 		this.states = states;
@@ -189,9 +187,9 @@ public class NFALambda extends FA {
 	
 	/**
 	 * Converts the automaton to a DFA.
-	 * @return DFA recognizing the same language.
 	 * @throws AutomatonException
 	 * @throws CloneNotSupportedException
+	 * @return DFA recognizing the same language.
 	 */
 	public DFA toDFA() throws AutomatonException, CloneNotSupportedException {
 		
@@ -238,9 +236,9 @@ public class NFALambda extends FA {
 	 * Move takes a set of states and a symbol from the alphabet and returns the set of states reachable by the given symbol
 	 * @param q Queue<State> used as starting point
 	 * @param a alphabet symbol
-	 * @return set of states reachable by the given symbol
 	 * @throws AutomatonException
 	 * @throws CloneNotSupportedException
+	 * @return set of states reachable by the given symbol
 	 */
 	public Queue<State> move(Queue<State> q, Character a) throws CloneNotSupportedException, AutomatonException {
 		
@@ -265,9 +263,9 @@ public class NFALambda extends FA {
 	/**
 	 * Lambda closure takes a set of states and returns the set of reachable states taking only "lambda" transitions
 	 * @param q Queue<State> used as starting point
-	 * @return Queue<State> with the States reached by "lambda", starting from q
 	 * @throws AutomatonException
 	 * @throws CloneNotSupportedException
+	 * @return Queue<State> with the States reached by "lambda", starting from q
 	 */
 	public Queue<State> closure(Queue<State> q) throws CloneNotSupportedException, AutomatonException {
 		
@@ -296,6 +294,14 @@ public class NFALambda extends FA {
 		return qss;
 	}
 
+	/**
+	 * Transition constructor and state set
+	 * @param t set of extended transitions
+	 * @param v set of visited states
+	 * @throws AutomatonException
+	 * @throws CloneNotSupportedException
+	 * @return tuple with new states and new transitions
+	 */
 	public Tupla<StateSet, Set<Tupla<State, Character, State>>, Character> buildTransitions(Set<Tupla<Queue<State>, Character, Queue<State>>> t, Queue<Queue<State>> v) throws AutomatonException {
 		
 		HashMap<Queue<State>, String> aux = new HashMap<Queue<State>, String>();

@@ -10,6 +10,7 @@ import tp1.utils.Tupla;
  */
 public class DFA extends FA {
 
+	// Constructor
 	public DFA(StateSet states, Alphabet alphabet, Set<Tupla<State, Character, State>> transitions) 
 	throws IllegalArgumentException, AutomatonException {
 
@@ -158,10 +159,7 @@ public class DFA extends FA {
 	/**
 	 * Returns a new automaton which recognizes the complementary language.
 	 * @throws CloneNotSupportedException
-	 * 
-	 *
 	 * @throws AutomatonException
-	 *
 	 * @returns a new DFA accepting the language's complement.
 	 */
 	public DFA complement() throws CloneNotSupportedException, AutomatonException {
@@ -217,9 +215,7 @@ public class DFA extends FA {
 	/**
 	 * Returns a new automaton which recognizes the intersection of both languages,
 	 * the one accepted by 'this' and the one represented by 'other'.
-	 *
 	 * @throws Exception
-	 *
 	 * @returns a new DFA accepting the intersection of both languages.
 	 */
 	public DFA intersection(DFA other) throws Exception {
@@ -233,10 +229,8 @@ public class DFA extends FA {
 	/**
 	 * Returns a new automaton which recognizes the union of both languages, the one
 	 * accepted by ’this’ and the one represented by ’other’.
-	 *
 	 * @throws Exception
 	 * @throws AutomatonException
-	 *
 	 * @returns a new DFA accepting the union of both languages.
 	 */
 	public DFA union(DFA other) throws AutomatonException, Exception {

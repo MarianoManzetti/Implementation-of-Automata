@@ -151,8 +151,6 @@ public class DFAAutomatonMethodsTests2 {
 	public void testIntersecion() throws Exception {
 		DFA newDFA = dfa.intersection(dfa2);
 
-		System.out.println(newDFA.toString());
-
 		assertTrue(newDFA.repOk());
 	}
 
